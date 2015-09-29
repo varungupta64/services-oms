@@ -8,7 +8,7 @@ import org.springframework.data.repository.Repository;
 import com.exclusively.entities.Order;
 
 /**
- * Repository for Account data implemented using Spring Data JPA.
+ * Repository for Order data implemented using Spring Data JPA.
  * 
  * @author Anshul Chauhan
  */
