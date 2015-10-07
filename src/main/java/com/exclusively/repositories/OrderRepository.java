@@ -1,9 +1,7 @@
 package com.exclusively.repositories;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.CrudRepository;
 
 import com.exclusively.entities.Order;
 
@@ -12,7 +10,7 @@ import com.exclusively.entities.Order;
  * 
  * @author Anshul Chauhan
  */
-public interface OrderRepository extends Repository<Order, Long> {
+public interface OrderRepository extends CrudRepository<Order, Long> {
 
 	@Query("SELECT count(*) from Order")
 	public int countOrders();
