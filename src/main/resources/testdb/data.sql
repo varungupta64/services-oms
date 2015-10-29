@@ -1,22 +1,6 @@
-
-insert into SALE_ORDER (ORDER_NO, NAME) values ('123456789', 'Keri Lee');
-insert into SALE_ORDER (ORDER_NO, NAME) values ('123456001', 'Dollie R. Schnidt');
-insert into SALE_ORDER (ORDER_NO, NAME) values ('123456002', 'Cornelia J. LeClerc');
-insert into SALE_ORDER (ORDER_NO, NAME) values ('123456003', 'Cynthia Rau');
-insert into SALE_ORDER (ORDER_NO, NAME) values ('123456004', 'Douglas R. Cobbs');
-insert into SALE_ORDER (ORDER_NO, NAME) values ('123456005', 'Michael Patel');
-insert into SALE_ORDER (ORDER_NO, NAME) values ('123456006', 'Suzanne Wong');
-insert into SALE_ORDER (ORDER_NO, NAME) values ('123456007', 'Ivan C. Jaya');
-insert into SALE_ORDER (ORDER_NO, NAME) values ('123456008', 'Ida Ketterer');
-insert into SALE_ORDER (ORDER_NO, NAME) values ('123456009', 'Laina Ochoa Lucero');
-insert into SALE_ORDER (ORDER_NO, NAME) values ('123456010', 'Wesley M. Montana');
-insert into SALE_ORDER (ORDER_NO, NAME) values ('123456011', 'Leslie F. McCleary');
-insert into SALE_ORDER (ORDER_NO, NAME) values ('123456012', 'Sayeed D. Mudra');
-insert into SALE_ORDER (ORDER_NO, NAME) values ('123456013', 'Pietronella J. Domingo');
-insert into SALE_ORDER (ORDER_NO, NAME) values ('123456014', 'John S. O''Leary');
-insert into SALE_ORDER (ORDER_NO, NAME) values ('123456015', 'Gladys D. Smith');
-insert into SALE_ORDER (ORDER_NO, NAME) values ('123456016', 'Sally O. Thygesen');
-insert into SALE_ORDER (ORDER_NO, NAME) values ('123456017', 'Rachel Vogt');
-insert into SALE_ORDER (ORDER_NO, NAME) values ('123456018', 'Julia DeLong');
-insert into SALE_ORDER (ORDER_NO, NAME) values ('123456019', 'Mark T. Rizzoli');
-insert into SALE_ORDER (ORDER_NO, NAME) values ('123456020', 'Maria J. Angelo');
+insert into ORDERS(ID,SUBORDERID,MOBILENUMBER,STATUS) values ('1234501','111','1234567890','StateA');
+insert into ORDERS(ID,SUBORDERID,MOBILENUMBER,STATUS) values ('1234502','222','1234567891','StateB');
+insert into ORDERS(ID,SUBORDERID,MOBILENUMBER,STATUS) values ('1234503','333','1234567892','StateB');
+insert into ORDERS(ID,SUBORDERID,MOBILENUMBER,STATUS) values ('1234504','444','1234567893','StateC');
+insert into ORDERS(ID,SUBORDERID,MOBILENUMBER,STATUS) values ('1234505','555','1234567894','StateC');
+insert into ORDERS(ID,SUBORDERID,MOBILENUMBER,STATUS) values ('1234506','666','1234567895','StateB');
