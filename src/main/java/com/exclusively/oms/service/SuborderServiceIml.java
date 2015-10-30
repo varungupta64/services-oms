@@ -29,20 +29,20 @@ public class SuborderServiceIml implements SuborderService{
 	@Override
 	public void updateOrders(Suborder o) {
 		// TODO Auto-generated method stub
-		suborderRepository.save(o);
+		suborderRepository.updateSuborder(o.getSuborderId(),o.getStatus());
 	}
 
 	@Override
 	public String getOrderStatus(Suborder o) {
 		// TODO Auto-generated method stub
-		return suborderRepository.findOne(o.getId()).getStatus();
+		return suborderRepository.findBySuborderId(o.getSuborderId()).getStatus();
 		
 	}
 
 	@Override
-	public Suborder listOrdersById(Long id) {
+	public Suborder listOrdersById(String id) {
 		// TODO Auto-generated method stub
-		return suborderRepository.findOne(id);
+		return suborderRepository.findBySuborderId(id);
 	}
 
 	@Override

@@ -2,6 +2,10 @@
 spring:
   application:
      name: oms-service
+  datasource:
+    url: jdbc:mysql://127.0.0.1/oms
+    username: root
+    password: mysql   
 
 # Discovery Server Access
 eureka:

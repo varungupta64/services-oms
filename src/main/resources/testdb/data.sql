@@ -1,6 +1,76 @@
-insert into ORDERS(ID,SUBORDERID,MOBILENUMBER,STATUS) values ('1234501','111','1234567890','StateA');
-insert into ORDERS(ID,SUBORDERID,MOBILENUMBER,STATUS) values ('1234502','222','1234567891','StateB');
-insert into ORDERS(ID,SUBORDERID,MOBILENUMBER,STATUS) values ('1234503','333','1234567892','StateB');
-insert into ORDERS(ID,SUBORDERID,MOBILENUMBER,STATUS) values ('1234504','444','1234567893','StateC');
-insert into ORDERS(ID,SUBORDERID,MOBILENUMBER,STATUS) values ('1234505','555','1234567894','StateC');
-insert into ORDERS(ID,SUBORDERID,MOBILENUMBER,STATUS) values ('1234506','666','1234567895','StateB');
+INSERT INTO `oms`.`suborder`
+(
+`suborder_id`,
+`order_id`,
+`status`,
+`mobile`)
+VALUES
+(
+1234501,
+111,
+'StateA',
+1234567891);
+INSERT INTO `oms`.`suborder`
+(
+`suborder_id`,
+`order_id`,
+`status`,
+`mobile`)
+VALUES
+(
+1234502,
+222,
+'StateA',
+1234567892);
+INSERT INTO `oms`.`suborder`
+(
+`suborder_id`,
+`order_id`,
+`status`,
+`mobile`)
+VALUES
+(
+1234503,
+333,
+'StateB',
+1234567893
+);
+INSERT INTO `oms`.`suborder`
+(
+`suborder_id`,
+`order_id`,
+`status`,
+`mobile`)
+VALUES
+(
+1234504,
+444,
+'StateC',
+1234567894
+);
+INSERT INTO `oms`.`suborder`
+(
+`suborder_id`,
+`order_id`,
+`status`,
+`mobile`)
+VALUES
+(
+1234505,
+555,
+'StateD',
+1234567895
+);
+INSERT INTO `oms`.`suborder`
+(
+`suborder_id`,
+`order_id`,
+`status`,
+`mobile`)
+VALUES
+(
+1234506,
+666,
+'StateB',
+1234567896
+);

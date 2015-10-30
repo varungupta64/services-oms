@@ -48,7 +48,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableDiscoveryClient
 @EntityScan("com.exclusively.oms.entities")
 @EnableJpaRepositories("com.exclusively.oms.repositories")
-@PropertySource("classpath:db-config.properties")
+//@PropertySource("classpath:db-config.properties")
 @EnableSwagger2
 public class Application {
 	protected Logger logger = Logger.getLogger(Application.class.getName());
@@ -61,7 +61,7 @@ public class Application {
 	 * Creates an in-memory "rewards" database populated with test data for fast
 	 * testing
 	 */
-	@Bean
+	/*@Bean
 	public DataSource dataSource() {
 		logger.info("dataSource() invoked");
 
@@ -73,7 +73,7 @@ public class Application {
 		logger.info("dataSource = " + dataSource);
 
 		return dataSource;
-	}
+	}*/
 	
 	@Bean
 	  public Docket petApi() {

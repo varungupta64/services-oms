@@ -6,8 +6,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.exclusively.oms.entities.Order;
 import com.exclusively.oms.entities.Suborder;
 import com.exclusively.oms.service.SuborderService;
 
@@ -46,9 +50,9 @@ public class SuborderController {
 	
 	@RequestMapping(value="/orders/{id}",method = RequestMethod.GET)
 	@ResponseBody
-	public Suborder getOrderById(@PathVariable("id") Long id)
+	public Suborder getOrderById(@PathVariable("id") String suborderId)
 	{
-		return suborderservice.listOrdersById(id);
+		return suborderservice.listOrdersById(suborderId);
 	}
 	
 	@RequestMapping(value="/orders/mobile/{id}",method = RequestMethod.GET)
@@ -76,6 +80,19 @@ public class SuborderController {
 
 	}
 
+	@RequestMapping(value = "/orders/save", method = RequestMethod.POST)
+	@ResponseBody
+	public List <String> saveOrders(@RequestBody Order order) 
+	{	
+		List <String> request = new ArrayList<String>();
+		for (Suborder suborder : order.getSuborders())
+		{
+			suborderservice.addOrders(suborder);
+			request.add(suborder.getSuborderId().toString());
+		}
+		return request;
+	}
+	
 	boolean isUpdatable(String currentStatus, String finalStatus) {
 		HashMap<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
 		map.put("StateA", new ArrayList<String>(Arrays.asList("StateB", "StateC", "StateD")));
@@ -97,6 +114,4 @@ public class SuborderController {
 		return status;
 
 	}
-	
-	
 }

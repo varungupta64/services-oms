@@ -117,6 +117,12 @@
 			<artifactId>springfox-swagger-ui</artifactId>
 			<version>2.0.2</version>
 		</dependency>
+		<!-- MYSQL connector -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.34</version>
+		</dependency>
 	</dependencies>
 
 	<build>

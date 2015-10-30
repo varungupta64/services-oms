@@ -9,6 +9,6 @@ public interface SuborderService {
 		public Iterable<Suborder> listOrders();
 		public void updateOrders(Suborder o);
 		public String getOrderStatus(Suborder o);
-		public Suborder listOrdersById(Long id);
+		public Suborder listOrdersById(String id);
 		public List<Suborder> listOrdersByMobileNumber(Long id);
 }
