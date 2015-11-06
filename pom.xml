@@ -123,6 +123,12 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.1.34</version>
 		</dependency>
+		<!-- SOAP Dependency -->	
+  		<dependency>
+  			<groupId>org.springframework.ws</groupId>
+  			<artifactId>spring-ws-core</artifactId>
+  			<version>2.2.2.RELEASE</version>
+  		</dependency>
 	</dependencies>
 
 	<build>
@@ -138,6 +144,37 @@
 					</execution>
 				</executions>
 			</plugin>
+			
+			<!-- Plugin for WSDL -->
+       <plugin>
+       <groupId>org.jvnet.jaxb2.maven2</groupId>
+       <artifactId>maven-jaxb2-plugin</artifactId>
+       <version>0.12.3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <schemaLanguage>WSDL</schemaLanguage>
+                    <schemaDirectory>src/main/resources</schemaDirectory>
+                    <schemaIncludes>
+        				<include>*.wsdl</include>
+    				</schemaIncludes> 
+                    <generatePackage>com.unicommerce.wsdl</generatePackage>
+                    <generateDirectory>${project.build.directory}</generateDirectory>
+                    <!-- <schemas>
+                        <schema>
+                            <url>https://exclusively.unicommerce.com/services/soap/uniware16.wsdl</url>
+                        </schema>
+                    </schemas> -->
+                </configuration>
+            </plugin>
+            
+            <!-- Plugin For WSDL Ends -->
+			
 		</plugins>
 	</build>
 </project>

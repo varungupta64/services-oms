@@ -1,5 +1,7 @@
 package com.exclusively.oms.controllers;
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,6 +11,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,11 +25,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.exclusively.oms.entities.Order;
 import com.exclusively.oms.entities.Suborder;
 import com.exclusively.oms.service.SuborderService;
+import com.exclusively.unicommerce.service.ClientConfig;
+import com.exclusively.unicommerce.service.SaleOrderClient;
 
 @RestController
 public class SuborderController {
 
-	private String currentStatus, finalStatus,status;
+	private String currentStatus, finalStatus,status,response;
 	
 	@Autowired
 	private SuborderService suborderservice;
@@ -35,9 +40,20 @@ public class SuborderController {
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.OK)
 	public String addOrders(@RequestBody Suborder order) {
+		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+		ctx.register(ClientConfig.class);
+		ctx.refresh();
+		SaleOrderClient saleorderclient = ctx.getBean(SaleOrderClient.class);
+		
 		if(order.getSuborderId() ==  null || order.getSuborderId().isEmpty())
 			return "400 BAD REQUEST";
 		suborderservice.addOrders(order);
+		try {
+			response = saleorderclient.createSaleOrder(order);
+		} catch (KeyManagementException | NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//client.pushToUnicommerce(order);
 		return "Success";
 	}
@@ -84,6 +100,10 @@ public class SuborderController {
 	@ResponseBody
 	public List <String> saveOrders(@RequestBody Order order) 
 	{	
+		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+		ctx.register(ClientConfig.class);
+		ctx.refresh();
+		SaleOrderClient saleorderclient = ctx.getBean(SaleOrderClient.class);
 		List <String> request = new ArrayList<String>();
 		for (Suborder suborder : order.getSuborders())
 		{
