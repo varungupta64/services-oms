@@ -146,6 +146,7 @@
 			</plugin>
 			
 			<!-- Plugin for WSDL -->
+			<!--
        <plugin>
        <groupId>org.jvnet.jaxb2.maven2</groupId>
        <artifactId>maven-jaxb2-plugin</artifactId>
@@ -165,14 +166,14 @@
     				</schemaIncludes> 
                     <generatePackage>com.unicommerce.wsdl</generatePackage>
                     <generateDirectory>${project.build.directory}</generateDirectory>
-                    <!-- <schemas>
+                    <schemas>
                         <schema>
                             <url>https://exclusively.unicommerce.com/services/soap/uniware16.wsdl</url>
                         </schema>
-                    </schemas> -->
+                    </schemas>
                 </configuration>
             </plugin>
-            
+            -->
             <!-- Plugin For WSDL Ends -->
 			
 		</plugins>
