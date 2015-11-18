@@ -6,7 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -32,7 +35,7 @@ import com.exclusively.unicommerce.service.SaleOrderClient;
 public class SuborderController {
 
 	private String currentStatus, finalStatus,status,response;
-	
+
 	@Autowired
 	private SuborderService suborderservice;
 
@@ -44,7 +47,7 @@ public class SuborderController {
 		ctx.register(ClientConfig.class);
 		ctx.refresh();
 		SaleOrderClient saleorderclient = ctx.getBean(SaleOrderClient.class);
-		
+
 		if(order.getSuborderId() ==  null || order.getSuborderId().isEmpty())
 			return "400 BAD REQUEST";
 		suborderservice.addOrders(order);
@@ -63,14 +66,14 @@ public class SuborderController {
 	public Iterable<Suborder> getAllOrders() {
 		return suborderservice.listOrders();
 	}
-	
+
 	@RequestMapping(value="/orders/{id}",method = RequestMethod.GET)
 	@ResponseBody
 	public Suborder getOrderById(@PathVariable("id") String suborderId)
 	{
 		return suborderservice.listOrdersById(suborderId);
 	}
-	
+
 	@RequestMapping(value="/orders/mobile/{id}",method = RequestMethod.GET)
 	@ResponseBody
 	public List<Suborder> getOrderByMobileNumber(@PathVariable("id") Long id)
@@ -112,21 +115,108 @@ public class SuborderController {
 		}
 		return request;
 	}
-	
+
 	boolean isUpdatable(String currentStatus, String finalStatus) {
-		HashMap<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
+		/*	HashMap<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
 		map.put("StateA", new ArrayList<String>(Arrays.asList("StateB", "StateC", "StateD")));
 		map.put("StateB", new ArrayList<String>(Arrays.asList("StateC", "StateD")));
 		map.put("StateC", new ArrayList<String>(Arrays.asList("StateD")));
-		map.put("StateD", new ArrayList<String>(Arrays.asList("StateD")));
+		map.put("StateD", new ArrayList<String>(Arrays.asList("StateD")));*/
 
-		Collection<String> values = map.get(currentStatus);
+		Map<String, Set<String>> Map = new HashMap<String, Set<String>>();
+
+		Set<String> keyStart = new HashSet<String>();
+		keyStart.add("Order Created");
+		Map.put("Start", keyStart);
+
+		Set<String> keySetOrderCreated = new HashSet<String>();
+		keySetOrderCreated.add("Payment Pending");
+		Map.put("Order Created", keySetOrderCreated);
+
+		Set<String> keyPaymentPending = new HashSet<String>();
+		keyPaymentPending.add("Payment Processing");
+		keyPaymentPending.add("Verification Pending");
+		Map.put("Payment Pending", keyPaymentPending);
+
+		Set<String> keyPaymentProcessing = new HashSet<String>();
+		keyPaymentProcessing.add("Payment Rejected");
+		keyPaymentProcessing.add("Payment Processed");
+		Map.put("Payment Processing", keyPaymentProcessing);
+
+		Set<String> keyVerificationPending = new HashSet<String>();
+		keyVerificationPending.add("COD Confirmed");
+		keyVerificationPending.add("COD Rejected");
+		Map.put("Verification Pending", keyVerificationPending);
+
+		Set<String> keyCODRejected = new HashSet<String>();
+		keyCODRejected.add("Order Rejected");
+		Map.put("COD Rejected", keyCODRejected);
+
+		Set<String> keyPaymentRejected = new HashSet<String>();
+		keyPaymentRejected.add("Order Rejected");
+		Map.put("Payment Rejected", keyPaymentRejected);
+
+		Set<String> keyOrderRejected = new HashSet<String>();
+		Map.put("Order Rejected", keyOrderRejected);
+
+		Set<String> keyCODConfirmed = new HashSet<String>();
+		keyCODConfirmed.add("Order Confirmed");
+		Map.put("COD Confirmed", keyCODConfirmed);
+
+		Set<String> keyPaymentConfirmed = new HashSet<String>();
+		keyPaymentConfirmed.add("Order Confirmed");
+		Map.put("Payment Confirmed", keyPaymentConfirmed);
+
+		Set<String> keyOrderConfirmed = new HashSet<String>();
+		keyOrderConfirmed.add("Seller Panel");
+		keyOrderConfirmed.add("Order Fulfillment Processing");
+		Map.put("Order Confirmed", keyOrderConfirmed);
+
+		Set<String> keySellerPanel = new HashSet<String>();
+		
+		Map.put("Seller Panel", keySellerPanel);
+
+		Set<String> keyOrderFulfilmentProcessing = new HashSet<String>();
+		keyOrderFulfilmentProcessing.add("Packed");
+		Map.put("Order Fulfilment Processing", keyOrderFulfilmentProcessing);
+
+		Set<String> keyPacked = new HashSet<String>();
+		keyPacked.add("Out Of Stock");
+		keyPacked.add("Courier API Integration");
+		Map.put("Packed", keyPacked);
+
+		Set<String> keyOutOfStock = new HashSet<String>();
+		keyOutOfStock.add("Order Cancelled");
+		Map.put("Out Of Stock", keyOutOfStock);
+
+		Set<String> keyOrderCancelled = new HashSet<String>();
+		Map.put("Order Cancelled", keyOrderCancelled);
+
+		Set<String> keyCourierAPIIntegration = new HashSet<String>();
+		keyCourierAPIIntegration.add("RTO");
+		keyCourierAPIIntegration.add("Delivered");
+		Map.put("Courier API Integration", keyCourierAPIIntegration);
+
+		Set<String> keyRTO = new HashSet<String>();
+		Map.put("RTO", keyRTO);
+
+		Set<String> keyDelivered = new HashSet<String>();
+		keyDelivered.add("Return Leg");
+		keyDelivered.add("Terminate");
+		Map.put("Delivered", keyDelivered);
+
+		Set<String> keyReturnLeg = new HashSet<String>();
+		Map.put("Return Leg", keyReturnLeg);
+
+		Set<String> keyTerminate = new HashSet<String>();
+		Map.put("Terminate", keyTerminate);
+		
+		Collection<String> values = Map.get(currentStatus);
 
 		if (values.contains(finalStatus))
 			return true;
 		else
 			return false;
-
 	}
 
 	public String getCurrentStatus(Suborder order) {
