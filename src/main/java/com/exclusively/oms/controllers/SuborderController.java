@@ -18,6 +18,7 @@ import javax.ws.rs.Consumes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,7 +46,6 @@ public class SuborderController {
 
 	@RequestMapping(value = "/orders/add", method = RequestMethod.POST)
 	@ResponseBody
-	@ResponseStatus(value = HttpStatus.OK)
 	public String addOrders(@RequestBody Suborder suborder) {
 		
 		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
@@ -54,7 +54,7 @@ public class SuborderController {
 		SaleOrderClient saleorderclient = ctx.getBean(SaleOrderClient.class);
 
 		if(suborder.getSuborderId() ==  null || suborder.getSuborderId().isEmpty())
-			return "400 BAD REQUEST";
+			return new ResponseEntity(HttpStatus.BAD_REQUEST).getStatusCode().toString();
 		
 		suborderservice.addOrders(suborder);
 		SaleOrder.SaleOrderItems SOI = new SaleOrder.SaleOrderItems();;
@@ -100,26 +100,23 @@ public class SuborderController {
 		finalStatus = order.getStatus();
 		boolean isupdatable = isUpdatable(currentStatus, finalStatus);
 		if (isupdatable) {
-			// call update service.
 			this.suborderservice.updateOrders(order);
 			this.suborderservice.addSuborderToHistory(order);
-			//enums to be inserted
-			return "Order updated successfully";
+			return new ResponseEntity(HttpStatus.OK).getStatusCode().toString();
 		} else
-			return "Sorry your order can't be updated because current status of your order is :" + currentStatus;
+			return new ResponseEntity(HttpStatus.CREATED).getStatusCode().toString()+" Cannot Change Status to :"+finalStatus;
 
 	}
 
 	@RequestMapping(value = "/orders/save", method = RequestMethod.POST)
 	@ResponseBody
-	public List <String> saveOrders(@RequestBody Order order) 
+	public String saveOrders(@RequestBody Order order) 
 	{	
 		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
 		ctx.register(ClientConfig.class);
 		ctx.refresh();
 		SaleOrderClient saleorderclient = ctx.getBean(SaleOrderClient.class);
 		
-		List <String> request = new ArrayList<String>();
 		SaleOrder.SaleOrderItems SOI = new SaleOrder.SaleOrderItems();
 		
 		for (Suborder suborder : order.getSuborders())
@@ -128,15 +125,19 @@ public class SuborderController {
 			suborderservice.addSuborderToHistory(suborder);
 			SaleOrderItem saleorderitem = setSaleOrderItems(suborder);
 			SOI.getSaleOrderItem().add(saleorderitem);
-			request.add(suborder.getSuborderId().toString());
 		}
-		try {
+		try 
+		{
 			saleorderclient.createSaleOrder(order, SOI);
-		} catch (KeyManagementException | NoSuchAlgorithmException e) {
+		}
+		catch (KeyManagementException | NoSuchAlgorithmException e) 
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return new ResponseEntity(HttpStatus.BAD_REQUEST).getStatusCode().toString();
 		}
-		return request;
+		
+		return new ResponseEntity(HttpStatus.CREATED).getStatusCode().toString();
 	}
 	
 	private SaleOrderItem setSaleOrderItems(Suborder suborder) {

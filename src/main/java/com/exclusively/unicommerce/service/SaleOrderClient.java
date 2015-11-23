@@ -56,7 +56,7 @@ import com.unicommerce.wsdl.SaleOrderItem;
 
 public class SaleOrderClient extends WebServiceGatewaySupport{
 	
-	private static final String uri = "https://exclusively.unicommerce.com/services/soap/uniware16.wsdl?version=1.6"; //"http://requestb.in/1hrfb1s1"; // 
+	private static final String uri = "https://exclusively.unicommerce.com/services/soap/uniware16.wsdl?version=1.6"; //"http://requestb.in/14x2fvf1"; //  
 	public String createSaleOrder(Order order,SaleOrder.SaleOrderItems SOI) throws NoSuchAlgorithmException, KeyManagementException
 	{
 		/*changes start*/
@@ -164,7 +164,7 @@ public class SaleOrderClient extends WebServiceGatewaySupport{
 							java.util.Date date= new java.util.Date();
 							SOAPElement CreatedSOAPElement = usernameTokenSOAPElement.addChildElement("Created","wsu");
 							//System.out.println(new Timestamp(date.getTime()).toString());
-							CreatedSOAPElement.addTextNode("2015-10-21T10:57:29.710Z");
+							CreatedSOAPElement.addTextNode(new Timestamp(date.getTime()).toString());
 
 						  }catch (SOAPException e) {
 							// TODO Auto-generated catch block
@@ -188,35 +188,25 @@ public class SaleOrderClient extends WebServiceGatewaySupport{
 		AddressRef billingAddRef = new AddressRef();
 		AddressRef shippingAddRef = new AddressRef();
 		
-		//saleorderitem.setCode(String.valueOf(suborder.getSuborderId()));
-		//saleorderitem.setItemSKU("Test123");
-		//saleorderitem.setShippingMethodCode(suborder.getShippingMethod());
-		//saleorderitem.setTotalPrice(BigDecimal.valueOf(suborder.getGrandTotal()));
-		//saleorderitem.setSellingPrice(BigDecimal.valueOf(suborder.getSubtotal()));
-		//saleorderitem.setDiscount(BigDecimal.valueOf(suborder.getGrandTotal()-suborder.getSubtotal()));		
-		
-		//SOI.getSaleOrderItem().add(saleorderitem);
-		//SOI.getSaleOrderItem().add(saleorderitem1);
-		
 		BillingAdd.setId("1");
-		BillingAdd.setName("TESST");
-		BillingAdd.setAddressLine1("S-13, Neeraj Bhagat CO, St. Soldier Tower, PVR Cinema Complex, Vikas Puri"); 
-		BillingAdd.setCity("New Delhi");
-		BillingAdd.setState("Delhi");
-		BillingAdd.setCountry("IN");
-		BillingAdd.setPincode("110018");
-		BillingAdd.setPhone("9811578181");
-		BillingAdd.setEmail("antariksha@gmail.com");
+		BillingAdd.setName(order.getBillingName());
+		BillingAdd.setAddressLine1(order.getBillingAddressLine1()); 
+		BillingAdd.setCity(order.getBillingCity());
+		BillingAdd.setState(order.getBillingState());
+		BillingAdd.setCountry(order.getBillingCountry());
+		BillingAdd.setPincode(order.getBillingPincode());
+		BillingAdd.setPhone(order.getBillingPhone());
+		BillingAdd.setEmail(order.getBillingEmail());
 		
 		ShippingAdd.setId("2");
-		ShippingAdd.setName("Test");
-		ShippingAdd.setAddressLine1("S-13, Neeraj Bhagat CO, St. Soldier Tower, PVR Cinema Complex, Vikas Puri");
-		ShippingAdd.setCity("New Delhi");
-		ShippingAdd.setState("Delhi");
-		ShippingAdd.setCountry("IN");
-		ShippingAdd.setPincode("110018");
-		ShippingAdd.setPhone("9711579181");
-		ShippingAdd.setEmail("test@gmail.com");
+		ShippingAdd.setName(order.getShippingName());
+		ShippingAdd.setAddressLine1(order.getShippingAddressLine1());
+		ShippingAdd.setCity(order.getShippingCity());
+		ShippingAdd.setState(order.getShippingState());
+		ShippingAdd.setCountry(order.getShippingCountry());
+		ShippingAdd.setPincode(order.getShippingPincode());
+		ShippingAdd.setPhone(order.getShippingPhone());
+		ShippingAdd.setEmail(order.getShippingEmail());
 		
 		addresses.getAddress().add(ShippingAdd);
 		addresses.getAddress().add(BillingAdd);
@@ -233,8 +223,6 @@ public class SaleOrderClient extends WebServiceGatewaySupport{
 		saleorder.setCode(String.valueOf(order.getSuborders().get(0).getOrderId()));
 		saleorder.setDisplayOrderCode(String.valueOf(order.getSuborders().get(0).getOrderId()));
 		saleorder.setSaleOrderItems(SOI);
-		
-		
 		
 		return saleorder;
 	}
