@@ -1,14 +1,14 @@
 CREATE SCHEMA `oms` ;
 
 
-
-
 CREATE TABLE `orders` (
   `order_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `total_amount` int(11) DEFAULT NULL,
   PRIMARY KEY (`order_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
-SELECT * FROM oms.orders;CREATE TABLE `suborder_history` (
+
+
+CREATE TABLE `suborder_history` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `suborder_id` varchar(45) DEFAULT NULL,
   `order_id` bigint(20) DEFAULT NULL,
@@ -17,7 +17,39 @@ SELECT * FROM oms.orders;CREATE TABLE `suborder_history` (
   `value_type` varchar(45) DEFAULT NULL,
   `status` varchar(45) NOT NULL,
   `store_id` varchar(45) DEFAULT NULL,
-  `created_at` datetime DEFAULT NULL,CREATE TABLE `suborder` (
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `latitude` double DEFAULT NULL,
+  `longitude` double DEFAULT NULL,
+  `x_forwarded_for` varchar(1) DEFAULT NULL,
+  `customer_name` varchar(45) DEFAULT NULL,
+  `customer_id` bigint(20) DEFAULT NULL,
+  `customer_is_guest` varchar(1) DEFAULT NULL,
+  `customer_email` varchar(45) DEFAULT NULL,
+  `mobilenumber` bigint(20) NOT NULL,
+  `total_item_count` bigint(20) DEFAULT NULL,
+  `order_currency` varchar(45) DEFAULT NULL,
+  `subtotal` decimal(10,0) DEFAULT NULL,
+  `coupon_code` varchar(15) DEFAULT NULL,
+  `grand_total` decimal(10,0) DEFAULT NULL,
+  `gift_card_amount_used` decimal(10,0) DEFAULT NULL,
+  `store_credits_used` decimal(10,0) DEFAULT NULL,
+  `total_paid` decimal(10,0) DEFAULT NULL,
+  `prepaid_amount` decimal(10,0) DEFAULT NULL,
+  `cod_amount` decimal(10,0) DEFAULT NULL,
+  `part_payment` decimal(10,0) DEFAULT NULL,
+  `emi_charges` decimal(10,0) DEFAULT NULL,
+  `shipping_address_id` int(11) DEFAULT NULL,
+  `billing_address_id` int(11) DEFAULT NULL,
+  `shipping_method` varchar(45) DEFAULT NULL,
+  `shipping_charges` decimal(10,0) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `suborder_id_idx` (`suborder_id`),
+  CONSTRAINT `suborder_id` FOREIGN KEY (`suborder_id`) REFERENCES `suborder` (`suborder_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+
+
+  CREATE TABLE `suborder` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `suborder_id` varchar(255) NOT NULL,
   `order_id` bigint(20) NOT NULL,
@@ -54,79 +86,3 @@ SELECT * FROM oms.orders;CREATE TABLE `suborder_history` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `subordercol_UNIQUE` (`suborder_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
-
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `latitude` double DEFAULT NULL,
-  `longitude` double DEFAULT NULL,
-  `x_forwarded_for` varchar(1) DEFAULT NULL,
-  `customer_name` varchar(45) DEFAULT NULL,
-  `customer_id` bigint(20) DEFAULT NULL,
-  `customer_is_guest` varchar(1) DEFAULT NULL,
-  `customer_email` varchar(45) DEFAULT NULL,
-  `mobilenumber` bigint(20) NOT NULL,
-  `total_item_count` bigint(20) DEFAULT NULL,
-  `order_currency` varchar(45) DEFAULT NULL,
-  `subtotal` decimal(10,0) DEFAULT NULL,
-  `coupon_code` varchar(15) DEFAULT NULL,
-  `grand_total` decimal(10,0) DEFAULT NULL,
-  `gift_card_amount_used` decimal(10,0) DEFAULT NULL,
-  `store_credits_used` decimal(10,0) DEFAULT NULL,
-  `total_paid` decimal(10,0) DEFAULT NULL,
-  `prepaid_amount` decimal(10,0) DEFAULT NULL,
-  `cod_amount` decimal(10,0) DEFAULT NULL,
-  `part_payment` decimal(10,0) DEFAULT NULL,
-  `emi_charges` decimal(10,0) DEFAULT NULL,
-  `shipping_address_id` int(11) DEFAULT NULL,
-  `billing_address_id` int(11) DEFAULT NULL,
-  `shipping_method` varchar(45) DEFAULT NULL,
-  `shipping_charges` decimal(10,0) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `suborder_id_idx` (`suborder_id`),
-  CONSTRAINT `suborder_id` FOREIGN KEY (`suborder_id`) REFERENCES `suborder` (`suborder_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
-
-
-CREATE TABLE `orders` (
-  `order_id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `total_amount` int(11) DEFAULT NULL,
-  PRIMARY KEY (`order_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
-SELECT * FROM oms.orders;CREATE TABLE `suborder_history` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `suborder_id` varchar(45) DEFAULT NULL,
-  `order_id` bigint(20) DEFAULT NULL,
-  `source` varchar(45) DEFAULT NULL,
-  `action_type` varchar(45) DEFAULT NULL,
-  `value_type` varchar(45) DEFAULT NULL,
-  `status` varchar(45) NOT NULL,
-  `store_id` varchar(45) DEFAULT NULL,
-  `created_at` datetime DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `latitude` double DEFAULT NULL,
-  `longitude` double DEFAULT NULL,
-  `x_forwarded_for` varchar(1) DEFAULT NULL,
-  `customer_name` varchar(45) DEFAULT NULL,
-  `customer_id` bigint(20) DEFAULT NULL,
-  `customer_is_guest` varchar(1) DEFAULT NULL,
-  `customer_email` varchar(45) DEFAULT NULL,
-  `mobilenumber` bigint(20) NOT NULL,
-  `total_item_count` bigint(20) DEFAULT NULL,
-  `order_currency` varchar(45) DEFAULT NULL,
-  `subtotal` decimal(10,0) DEFAULT NULL,
-  `coupon_code` varchar(15) DEFAULT NULL,
-  `grand_total` decimal(10,0) DEFAULT NULL,
-  `gift_card_amount_used` decimal(10,0) DEFAULT NULL,
-  `store_credits_used` decimal(10,0) DEFAULT NULL,
-  `total_paid` decimal(10,0) DEFAULT NULL,
-  `prepaid_amount` decimal(10,0) DEFAULT NULL,
-  `cod_amount` decimal(10,0) DEFAULT NULL,
-  `part_payment` decimal(10,0) DEFAULT NULL,
-  `emi_charges` decimal(10,0) DEFAULT NULL,
-  `shipping_address_id` int(11) DEFAULT NULL,
-  `billing_address_id` int(11) DEFAULT NULL,
-  `shipping_method` varchar(45) DEFAULT NULL,
-  `shipping_charges` decimal(10,0) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `suborder_id_idx` (`suborder_id`),
-  CONSTRAINT `suborder_id` FOREIGN KEY (`suborder_id`) REFERENCES `suborder` (`suborder_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
