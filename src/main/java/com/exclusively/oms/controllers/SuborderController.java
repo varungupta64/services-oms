@@ -1,5 +1,6 @@
 package com.exclusively.oms.controllers;
 
+import java.math.BigDecimal;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -30,6 +32,8 @@ import com.exclusively.oms.entities.Suborder;
 import com.exclusively.oms.service.SuborderService;
 import com.exclusively.unicommerce.service.ClientConfig;
 import com.exclusively.unicommerce.service.SaleOrderClient;
+import com.unicommerce.wsdl.SaleOrder;
+import com.unicommerce.wsdl.SaleOrderItem;
 
 @RestController
 public class SuborderController {
@@ -42,21 +46,27 @@ public class SuborderController {
 	@RequestMapping(value = "/orders/add", method = RequestMethod.POST)
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.OK)
-	public String addOrders(@RequestBody Suborder order) {
+	public String addOrders(@RequestBody Suborder suborder) {
+		
 		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
 		ctx.register(ClientConfig.class);
 		ctx.refresh();
 		SaleOrderClient saleorderclient = ctx.getBean(SaleOrderClient.class);
 
-		if(order.getSuborderId() ==  null || order.getSuborderId().isEmpty())
+		if(suborder.getSuborderId() ==  null || suborder.getSuborderId().isEmpty())
 			return "400 BAD REQUEST";
-		suborderservice.addOrders(order);
-		try {
-			response = saleorderclient.createSaleOrder(order);
-		} catch (KeyManagementException | NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		suborderservice.addOrders(suborder);
+		SaleOrder.SaleOrderItems SOI = new SaleOrder.SaleOrderItems();;
+//		try 
+//		{
+//		//	response = saleorderclient.createSaleOrder(suborder);
+//			//response = saleorderclient.createSaleOrder(suborder,SOI);
+//		} 
+//		catch (KeyManagementException | NoSuchAlgorithmException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		//client.pushToUnicommerce(order);
 		return "Success";
 	}
@@ -92,6 +102,7 @@ public class SuborderController {
 		if (isupdatable) {
 			// call update service.
 			this.suborderservice.updateOrders(order);
+			this.suborderservice.addSuborderToHistory(order);
 			//enums to be inserted
 			return "Order updated successfully";
 		} else
@@ -107,13 +118,39 @@ public class SuborderController {
 		ctx.register(ClientConfig.class);
 		ctx.refresh();
 		SaleOrderClient saleorderclient = ctx.getBean(SaleOrderClient.class);
+		
 		List <String> request = new ArrayList<String>();
+		SaleOrder.SaleOrderItems SOI = new SaleOrder.SaleOrderItems();
+		
 		for (Suborder suborder : order.getSuborders())
 		{
 			suborderservice.addOrders(suborder);
+			suborderservice.addSuborderToHistory(suborder);
+			SaleOrderItem saleorderitem = setSaleOrderItems(suborder);
+			SOI.getSaleOrderItem().add(saleorderitem);
 			request.add(suborder.getSuborderId().toString());
 		}
+		try {
+			saleorderclient.createSaleOrder(order, SOI);
+		} catch (KeyManagementException | NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return request;
+	}
+	
+	private SaleOrderItem setSaleOrderItems(Suborder suborder) {
+		// TODO Auto-generated method stub
+		SaleOrderItem saleorderitem = new SaleOrderItem();
+		saleorderitem.setCode(String.valueOf(suborder.getSuborderId()));
+		saleorderitem.setItemSKU(suborder.getItemsku());
+		saleorderitem.setShippingMethodCode("STD");
+		saleorderitem.setTotalPrice(BigDecimal.valueOf(suborder.getSubtotal()+suborder.getEmiCharges()+suborder.getShippingCharges()));
+		saleorderitem.setSellingPrice(BigDecimal.valueOf(suborder.getSubtotal()));
+		saleorderitem.setDiscount(BigDecimal.valueOf(suborder.getGiftCardAmountUsed()));		
+
+		return saleorderitem;
+		
 	}
 
 	boolean isUpdatable(String currentStatus, String finalStatus) {
@@ -123,93 +160,127 @@ public class SuborderController {
 		map.put("StateC", new ArrayList<String>(Arrays.asList("StateD")));
 		map.put("StateD", new ArrayList<String>(Arrays.asList("StateD")));*/
 
+		
+		
 		Map<String, Set<String>> Map = new HashMap<String, Set<String>>();
-
+		
 		Set<String> keyStart = new HashSet<String>();
-		keyStart.add("Order Created");
-		Map.put("Start", keyStart);
+		keyStart.add("CRD");
+		keyStart.add("CLD");
+		Map.put("STR", keyStart);
 
 		Set<String> keySetOrderCreated = new HashSet<String>();
-		keySetOrderCreated.add("Payment Pending");
-		Map.put("Order Created", keySetOrderCreated);
+		keySetOrderCreated.add("WFP");
+		keySetOrderCreated.add("CLD");
+		Map.put("CRD", keySetOrderCreated);
 
 		Set<String> keyPaymentPending = new HashSet<String>();
-		keyPaymentPending.add("Payment Processing");
-		keyPaymentPending.add("Verification Pending");
-		Map.put("Payment Pending", keyPaymentPending);
+		keyPaymentPending.add("PPR");
+		keyPaymentPending.add("PVF");
+		keyPaymentPending.add("CLD");
+		Map.put("WFP", keyPaymentPending);
 
 		Set<String> keyPaymentProcessing = new HashSet<String>();
-		keyPaymentProcessing.add("Payment Rejected");
-		keyPaymentProcessing.add("Payment Processed");
-		Map.put("Payment Processing", keyPaymentProcessing);
+		keyPaymentProcessing.add("PRE");
+		keyPaymentProcessing.add("PCO");
+		keyPaymentProcessing.add("CLD");
+		Map.put("PPR", keyPaymentProcessing);
 
 		Set<String> keyVerificationPending = new HashSet<String>();
-		keyVerificationPending.add("COD Confirmed");
-		keyVerificationPending.add("COD Rejected");
-		Map.put("Verification Pending", keyVerificationPending);
+		keyVerificationPending.add("CCO");
+		keyVerificationPending.add("CRE");
+		Map.put("PVF", keyVerificationPending);
 
 		Set<String> keyCODRejected = new HashSet<String>();
-		keyCODRejected.add("Order Rejected");
-		Map.put("COD Rejected", keyCODRejected);
+		keyCODRejected.add("REJ");
+		Map.put("CRE", keyCODRejected);
 
 		Set<String> keyPaymentRejected = new HashSet<String>();
-		keyPaymentRejected.add("Order Rejected");
-		Map.put("Payment Rejected", keyPaymentRejected);
+		keyPaymentRejected.add("REJ");
+		Map.put("PRE", keyPaymentRejected);
 
 		Set<String> keyOrderRejected = new HashSet<String>();
-		Map.put("Order Rejected", keyOrderRejected);
+		Map.put("REJ", keyOrderRejected);
 
 		Set<String> keyCODConfirmed = new HashSet<String>();
-		keyCODConfirmed.add("Order Confirmed");
-		Map.put("COD Confirmed", keyCODConfirmed);
+		keyCODConfirmed.add("INI");
+		Map.put("CRE", keyCODConfirmed);
 
 		Set<String> keyPaymentConfirmed = new HashSet<String>();
-		keyPaymentConfirmed.add("Order Confirmed");
-		Map.put("Payment Confirmed", keyPaymentConfirmed);
+		keyPaymentConfirmed.add("INI");
+		keyPaymentConfirmed.add("CLD");
+		Map.put("PCO", keyPaymentConfirmed);
 
 		Set<String> keyOrderConfirmed = new HashSet<String>();
-		keyOrderConfirmed.add("Seller Panel");
-		keyOrderConfirmed.add("Order Fulfillment Processing");
-		Map.put("Order Confirmed", keyOrderConfirmed);
+/*		keyOrderConfirmed.add("SellerPanel");
+*/		keyOrderConfirmed.add("WFF");
+		keyOrderConfirmed.add("CLD");
+		Map.put("INI", keyOrderConfirmed);
 
-		Set<String> keySellerPanel = new HashSet<String>();
-		
-		Map.put("Seller Panel", keySellerPanel);
+		/*Set<String> keySellerPanel = new HashSet<String>();
+		Map.put("SellerPanel", keySellerPanel);*/
 
 		Set<String> keyOrderFulfilmentProcessing = new HashSet<String>();
-		keyOrderFulfilmentProcessing.add("Packed");
-		Map.put("Order Fulfilment Processing", keyOrderFulfilmentProcessing);
+		keyOrderFulfilmentProcessing.add("PKD");
+		keyOrderFulfilmentProcessing.add("CLD");
+		Map.put("WFF", keyOrderFulfilmentProcessing);
 
 		Set<String> keyPacked = new HashSet<String>();
-		keyPacked.add("Out Of Stock");
-		keyPacked.add("Courier API Integration");
-		Map.put("Packed", keyPacked);
+		keyPacked.add("OOS");
+		keyPacked.add("CAI");
+		keyPacked.add("CLD");
+		Map.put("PKD", keyPacked);
 
 		Set<String> keyOutOfStock = new HashSet<String>();
-		keyOutOfStock.add("Order Cancelled");
-		Map.put("Out Of Stock", keyOutOfStock);
+		keyOutOfStock.add("CLD");
+		Map.put("OOS", keyOutOfStock);
 
 		Set<String> keyOrderCancelled = new HashSet<String>();
-		Map.put("Order Cancelled", keyOrderCancelled);
+		Map.put("CLD", keyOrderCancelled);
 
 		Set<String> keyCourierAPIIntegration = new HashSet<String>();
 		keyCourierAPIIntegration.add("RTO");
-		keyCourierAPIIntegration.add("Delivered");
-		Map.put("Courier API Integration", keyCourierAPIIntegration);
+		keyCourierAPIIntegration.add("DEL");
+		Map.put("CAI", keyCourierAPIIntegration);
 
 		Set<String> keyRTO = new HashSet<String>();
 		Map.put("RTO", keyRTO);
 
 		Set<String> keyDelivered = new HashSet<String>();
-		keyDelivered.add("Return Leg");
-		keyDelivered.add("Terminate");
-		Map.put("Delivered", keyDelivered);
+		keyDelivered.add("RPP");
+		keyDelivered.add("TER");
+		keyDelivered.add("CLD");
+		Map.put("DEL", keyDelivered);
 
-		Set<String> keyReturnLeg = new HashSet<String>();
-		Map.put("Return Leg", keyReturnLeg);
+		Set<String> keyReturnPickUpInitiation = new HashSet<String>();
+		keyReturnPickUpInitiation.add("CAL");
+		Map.put("RPP", keyReturnPickUpInitiation);
 
 		Set<String> keyTerminate = new HashSet<String>();
-		Map.put("Terminate", keyTerminate);
+		Map.put("TER", keyTerminate);
+		
+		Set<String> keyCourierAllocationAndReferenceNumber = new HashSet<String>();
+		keyCourierAllocationAndReferenceNumber.add("PKD");
+		Map.put("CAL", keyCourierAllocationAndReferenceNumber);
+		
+		Set<String> keyPickedUp = new HashSet<String>();
+		keyPickedUp.add("RPG");
+		Map.put("PKD", keyPickedUp);
+		
+		Set<String> keyRefundProcessing = new HashSet<String>();
+		keyRefundProcessing.add("RRJ");
+		keyRefundProcessing.add("RPD");
+		Map.put("RPG", keyRefundProcessing);
+		
+		Set<String> keyRefundProcessed = new HashSet<String>();
+		Map.put("RPD", keyRefundProcessed);
+		
+		Set<String> keyRefundRejected = new HashSet<String>();
+		keyRefundRejected.add("PRT");
+		Map.put("RRJ", keyRefundRejected);
+		
+		Set<String> keyProductReturned = new HashSet<String>();
+		Map.put("PRT", keyProductReturned);
 		
 		Collection<String> values = Map.get(currentStatus);
 
@@ -223,5 +294,27 @@ public class SuborderController {
 		status = suborderservice.getOrderStatus(order);
 		return status;
 
+	}
+	
+	@RequestMapping(value = "/orders/addToSuborderHistory", method = RequestMethod.POST)
+	@Consumes("application/json;charset=UTF-8")
+	@ResponseStatus(value = HttpStatus.OK)
+	public void addOrdersToHistory(@RequestBody Suborder suborder) {
+		suborderservice.addOrders(suborder);
+		suborderservice.addSuborderToHistory(suborder);
+	}
+	
+	@RequestMapping(value = "/orders/myorders/{customerId}", method = RequestMethod.GET)
+	@Consumes("application/json;charset=UTF-8")
+	@ResponseBody
+	public List<Suborder> getMyOrders(@PathVariable Long customerId) {
+		return suborderservice.listMyOrders(customerId);
+	}
+	
+	@RequestMapping(value = "/orders/trackSuborder/{suborderId}", method = RequestMethod.GET)
+	@Consumes("application/json;charset=UTF-8")
+	@ResponseBody
+	public List<Suborder> trackSuborder(@PathVariable String suborderId) {
+		return suborderservice.trackSuborder(suborderId);
 	}
 }

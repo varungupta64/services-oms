@@ -6,6 +6,8 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.Iterator;
+import java.sql.Timestamp;
+import java.util.Date;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -41,6 +43,7 @@ import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.saaj.SaajSoapMessage;
 import org.springframework.xml.transform.StringSource;
 
+import com.exclusively.oms.entities.Order;
 import com.exclusively.oms.entities.Suborder;
 import com.unicommerce.wsdl.Address;
 import com.unicommerce.wsdl.AddressRef;
@@ -54,7 +57,7 @@ import com.unicommerce.wsdl.SaleOrderItem;
 public class SaleOrderClient extends WebServiceGatewaySupport{
 	
 	private static final String uri = "https://exclusively.unicommerce.com/services/soap/uniware16.wsdl?version=1.6"; //"http://requestb.in/1hrfb1s1"; // 
-	public String createSaleOrder(Suborder suborder) throws NoSuchAlgorithmException, KeyManagementException
+	public String createSaleOrder(Order order,SaleOrder.SaleOrderItems SOI) throws NoSuchAlgorithmException, KeyManagementException
 	{
 		/*changes start*/
 		/*
@@ -64,7 +67,10 @@ public class SaleOrderClient extends WebServiceGatewaySupport{
 		 *           PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException:
 		 *               unable to find valid certification path to requested target
 		 */
-		/*TrustManager[] trustAllCerts = new TrustManager[] {
+		/*TrustManager[] trustAllCerts = new TrustManager[] {mp(date.getTime()).toString());
+							CreatedSOAPElement.addTextNode("");
+
+						  }catch (SOAPException e) { 
 		   new X509TrustManager() {
 		      public java.security.cert.X509Certificate[] getAcceptedIssuers() {
 		        return null;
@@ -107,8 +113,9 @@ public class SaleOrderClient extends WebServiceGatewaySupport{
 		 * end of the fix
 		 */
 		/*changes end*/
+		
 		SaleOrder saleorder = new SaleOrder();
-		saleorder = setSaleOrderObject(suborder);
+		saleorder = setSaleOrderObject(order,SOI);
 		CreateSaleOrderRequest request = new CreateSaleOrderRequest();
 		request.setSaleOrder(saleorder);
 		
@@ -153,7 +160,10 @@ public class SaleOrderClient extends WebServiceGatewaySupport{
 								NonceSOAPElement.setAttribute("EncodingType","http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary");
 								NonceSOAPElement.addTextNode("H8dHWiGKYpxEnwXvn/BO6A==");
 							
+								
+							java.util.Date date= new java.util.Date();
 							SOAPElement CreatedSOAPElement = usernameTokenSOAPElement.addChildElement("Created","wsu");
+							//System.out.println(new Timestamp(date.getTime()).toString());
 							CreatedSOAPElement.addTextNode("2015-10-21T10:57:29.710Z");
 
 						  }catch (SOAPException e) {
@@ -169,35 +179,34 @@ public class SaleOrderClient extends WebServiceGatewaySupport{
 		return "Pushed to Unicommerce";
 	}
 	
-	public SaleOrder setSaleOrderObject(Suborder suborder)
+	public SaleOrder setSaleOrderObject(Order order,SaleOrder.SaleOrderItems SOI)
 	{
 		SaleOrder saleorder = new SaleOrder();
 		Address BillingAdd = new Address();
 		Address ShippingAdd = new Address();
 		SaleOrder.Addresses addresses = new SaleOrder.Addresses();
-		SaleOrder.SaleOrderItems SOI = new SaleOrder.SaleOrderItems();
 		AddressRef billingAddRef = new AddressRef();
 		AddressRef shippingAddRef = new AddressRef();
-		SaleOrderItem saleorderitem = new SaleOrderItem();
 		
-		saleorderitem.setCode(String.valueOf(suborder.getSuborderId()));
-		saleorderitem.setItemSKU("Test123");
-		saleorderitem.setShippingMethodCode("STD");
-		saleorderitem.setTotalPrice(BigDecimal.valueOf(1231231));
-		saleorderitem.setSellingPrice(BigDecimal.valueOf(123123));
-		saleorderitem.setDiscount(BigDecimal.valueOf(1231231));		
+		//saleorderitem.setCode(String.valueOf(suborder.getSuborderId()));
+		//saleorderitem.setItemSKU("Test123");
+		//saleorderitem.setShippingMethodCode(suborder.getShippingMethod());
+		//saleorderitem.setTotalPrice(BigDecimal.valueOf(suborder.getGrandTotal()));
+		//saleorderitem.setSellingPrice(BigDecimal.valueOf(suborder.getSubtotal()));
+		//saleorderitem.setDiscount(BigDecimal.valueOf(suborder.getGrandTotal()-suborder.getSubtotal()));		
 		
-		SOI.getSaleOrderItem().add(saleorderitem);
+		//SOI.getSaleOrderItem().add(saleorderitem);
+		//SOI.getSaleOrderItem().add(saleorderitem1);
+		
 		BillingAdd.setId("1");
-		BillingAdd.setName("Test");
-		BillingAdd.setAddressLine1("S-13, Neeraj Bhagat CO, St. Soldier Tower, PVR Cinema Complex, Vikas Puri");
+		BillingAdd.setName("TESST");
+		BillingAdd.setAddressLine1("S-13, Neeraj Bhagat CO, St. Soldier Tower, PVR Cinema Complex, Vikas Puri"); 
 		BillingAdd.setCity("New Delhi");
 		BillingAdd.setState("Delhi");
 		BillingAdd.setCountry("IN");
 		BillingAdd.setPincode("110018");
-		BillingAdd.setPhone("9711579181");
-		BillingAdd.setEmail("test@gmail.com");
-		
+		BillingAdd.setPhone("9811578181");
+		BillingAdd.setEmail("antariksha@gmail.com");
 		
 		ShippingAdd.setId("2");
 		ShippingAdd.setName("Test");
@@ -221,8 +230,8 @@ public class SaleOrderClient extends WebServiceGatewaySupport{
 		saleorder.setCashOnDelivery(true);
 		saleorder.setAddresses(addresses);
 		saleorder.setChannel("Custom");
-		saleorder.setCode(String.valueOf(suborder.getOrderId()));
-		saleorder.setDisplayOrderCode(String.valueOf(suborder.getOrderId()));
+		saleorder.setCode(String.valueOf(order.getSuborders().get(0).getOrderId()));
+		saleorder.setDisplayOrderCode(String.valueOf(order.getSuborders().get(0).getOrderId()));
 		saleorder.setSaleOrderItems(SOI);
 		
 		

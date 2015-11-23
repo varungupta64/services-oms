@@ -9,8 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="SUBORDER")
-public class Suborder {
+@Table(name="SUBORDER_HISTORY")
+public class SuborderHistory {
 	
 	@Id 
 	@GeneratedValue
@@ -21,7 +21,16 @@ public class Suborder {
 	private String suborderId;
 	
 	@Column(name="ORDER_ID")
-	private String orderId;
+	private Long orderId;
+	
+	@Column(name="SOURCE")
+	private String source;
+	
+	@Column(name="ACTION_TYPE")
+	private String actionType;
+	
+	@Column(name="VALUE_TYPE")
+	private String valueType;
 	
 	@Column(name="STATUS")
 	private String status;
@@ -106,12 +115,6 @@ public class Suborder {
 	
 	@Column(name="SHIPPING_CHARGES")
 	private Double shippingCharges;
-	
-	@Column(name="ITEM_SKU")
-	private String itemsku;
-	
-	@Column(name="DEVICE")
-	private String device;
 
 	public long getId() {
 		return id;
@@ -128,13 +131,37 @@ public class Suborder {
 	public void setSuborderId(String suborderId) {
 		this.suborderId = suborderId;
 	}
-
-	public String getOrderId() {
+	
+	public Long getOrderId() {
 		return orderId;
 	}
 
-	public void setOrderId(String orderId) {
+	public void setOrderId(Long orderId) {
 		this.orderId = orderId;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+	}
+
+	public String getActionType() {
+		return actionType;
+	}
+
+	public void setActionType(String actionType) {
+		this.actionType = actionType;
+	}
+
+	public String getValueType() {
+		return valueType;
+	}
+
+	public void setValueType(String valueType) {
+		this.valueType = valueType;
 	}
 
 	public String getStatus() {
@@ -359,21 +386,5 @@ public class Suborder {
 
 	public void setShippingCharges(Double shippingCharges) {
 		this.shippingCharges = shippingCharges;
-	}
-
-	public String getItemsku() {
-		return itemsku;
-	}
-
-	public void setItemsku(String itemsku) {
-		this.itemsku = itemsku;
-	}
-
-	public String getDevice() {
-		return device;
-	}
-
-	public void setDevice(String device) {
-		this.device = device;
 	}
 }
