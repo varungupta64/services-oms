@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.exclusively.oms.entities.Order;
 import com.exclusively.oms.entities.Suborder;
+import com.exclusively.oms.error.ErrorInfo;
 import com.exclusively.oms.service.SuborderService;
 import com.exclusively.unicommerce.service.ClientConfig;
 import com.exclusively.unicommerce.service.SaleOrderClient;
@@ -305,11 +306,11 @@ public class SuborderController {
 		suborderservice.addSuborderToHistory(suborder);
 	}
 	
-	@RequestMapping(value = "/orders/myorders/{customerId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/orders/myorders/customerId/{customerId}/pageLimit/{pageLimit}/pageNumber/{pageNumber}", method = RequestMethod.GET)
 	@Consumes("application/json;charset=UTF-8")
 	@ResponseBody
-	public List<Suborder> getMyOrders(@PathVariable Long customerId) {
-		return suborderservice.listMyOrders(customerId);
+	public List<Suborder> getMyOrders(@PathVariable Long customerId,@PathVariable int pageLimit,@PathVariable int pageNumber) {
+		return suborderservice.listMyOrders(customerId,pageLimit,pageNumber);
 	}
 	
 	@RequestMapping(value = "/orders/trackSuborder/{suborderId}", method = RequestMethod.GET)
@@ -317,5 +318,11 @@ public class SuborderController {
 	@ResponseBody
 	public List<Suborder> trackSuborder(@PathVariable String suborderId) {
 		return suborderservice.trackSuborder(suborderId);
+	}
+	
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(Exception.class)
+	public @ResponseBody ErrorInfo handleError(HttpServletRequest req, Exception exception) {
+		return new ErrorInfo(req.getRequestURL().toString(),exception);
 	}
 }

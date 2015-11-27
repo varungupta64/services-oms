@@ -11,14 +11,7 @@ public interface SuborderService {
 		public String getOrderStatus(Suborder o);
 		public Suborder listOrdersById(String id);
 		public List<Suborder> listOrdersByMobileNumber(Long id);
-		
-		/**
-		 * @author varungupta01
-		 * 
-		 * @param suborderId
-		 * @return
-		 */
-		public List<Suborder> listMyOrders(Long customerId);
+		public List<Suborder> listMyOrders(Long customerId,int pageLimit,int pageNumber);
 		public void addSuborderToHistory(Suborder suborder);
 		List<Suborder> trackSuborder(String suborderId);
 }

@@ -60,12 +60,9 @@ public class SuborderServiceIml implements SuborderService{
 		return suborderRepository.findByMobileNumber(mobileNumber);//listOrdersByMobileNumber(id);
 	}
 	
-	/**
-	 * @author varungupta01
-	 */
 	@Override
-	public List<Suborder> listMyOrders(Long customerId) {		
-		PageRequest pageRequest = new PageRequest(0, 10, Sort.Direction.DESC, "updatedAt");
+	public List<Suborder> listMyOrders(Long customerId,int pageLimit,int pageNumber) {		
+		PageRequest pageRequest = new PageRequest(pageNumber, pageLimit, Sort.Direction.DESC, "updatedAt");
 		List<Suborder> suborderList = suborderRepository.findByCustomerId(customerId,pageRequest);
 		//List<Suborder> suborderList = null;
 		//if(null != suborderHistoryList){
@@ -77,7 +74,7 @@ public class SuborderServiceIml implements SuborderService{
 			//}
 		//}
 		return suborderList;
-	}
+	}	
 	
 	
 	@Override
