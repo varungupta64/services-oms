@@ -19,6 +19,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +51,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableJpaRepositories("com.exclusively.oms.repositories")
 //@PropertySource("classpath:db-config.properties")
 @EnableSwagger2
+@EnableAspectJAutoProxy
 public class Application {
 	protected Logger logger = Logger.getLogger(Application.class.getName());
 
