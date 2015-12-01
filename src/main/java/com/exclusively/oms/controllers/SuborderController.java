@@ -38,40 +38,14 @@ import com.unicommerce.wsdl.SaleOrder;
 import com.unicommerce.wsdl.SaleOrderItem;
 
 @RestController
+@RequestMapping("/oms")
 public class SuborderController {
 
 	private String currentStatus, finalStatus,status,response;
 
 	@Autowired
 	private SuborderService suborderservice;
-
-	@RequestMapping(value = "/orders/add", method = RequestMethod.POST)
-	@ResponseBody
-	public String addOrders(@RequestBody Suborder suborder) {
-		
-		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-		ctx.register(ClientConfig.class);
-		ctx.refresh();
-		SaleOrderClient saleorderclient = ctx.getBean(SaleOrderClient.class);
-
-		if(suborder.getSuborderId() ==  null || suborder.getSuborderId().isEmpty())
-			return new ResponseEntity(HttpStatus.BAD_REQUEST).getStatusCode().toString();
-		
-		suborderservice.addOrders(suborder);
-		SaleOrder.SaleOrderItems SOI = new SaleOrder.SaleOrderItems();;
-//		try 
-//		{
-//		//	response = saleorderclient.createSaleOrder(suborder);
-//			//response = saleorderclient.createSaleOrder(suborder,SOI);
-//		} 
-//		catch (KeyManagementException | NoSuchAlgorithmException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		//client.pushToUnicommerce(order);
-		return "Success";
-	}
-
+	
 	@RequestMapping(value = "/orders", method = RequestMethod.GET)
 	@ResponseBody
 	public Iterable<Suborder> getAllOrders() {
